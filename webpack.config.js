@@ -4,6 +4,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
   entry: path.resolve(__dirname, "src/index.js"),
+  mode: "development",
   output: {
     filename: "[name].bundle.js",
     path: path.resolve(__dirname, "dist"),
@@ -13,17 +14,39 @@ module.exports = {
       template: "./src/index.html",
       filename: "index.html",
     }),
+    new MiniCssExtractPlugin(),
   ],
   devServer: {
     static: {
       directory: path.resolve(__dirname, "dist"),
-      port: 3000,
       // open is when we call the devServer open the app in the browser page
-      open: true,
     },
+    port: 3000,
+    open: true,
   },
   module: {
     rules: [
+      {
+        test: /\.(js|jsx)$/,
+        include: path.resolve(__dirname, "src"),
+        exclude: path.resolve(__dirname, "node_modules"),
+        use: [
+          {
+            loader: "babel-loader",
+            options: {
+              presets: [
+                [
+                  "@babel/preset-env",
+                  {
+                    targets: "defaults",
+                  },
+                ],
+                "@babel/preset-react",
+              ],
+            },
+          },
+        ],
+      },
       {
         test: /\.css$/,
         use: [MiniCssExtractPlugin.loader, "css-loader"],
@@ -37,5 +60,10 @@ module.exports = {
         type: "asset/resource",
       },
     ],
+  },
+  optimization: {
+    splitChunks: {
+      chunks: "all",
+    },
   },
 };
