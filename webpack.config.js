@@ -1,6 +1,7 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const EslintPlugin = require("eslint-webpack-plugin");
 
 module.exports = {
   entry: path.resolve(__dirname, "src/index.js"),
@@ -10,6 +11,7 @@ module.exports = {
     path: path.resolve(__dirname, "dist"),
   },
   plugins: [
+    new EslintPlugin(),
     new HtmlWebpackPlugin({
       template: "./src/index.html",
       filename: "index.html",
@@ -46,6 +48,12 @@ module.exports = {
               ],
             },
           },
+          {
+            loader: "eslint-loader",
+            options: {
+              fix: true,
+            },
+          },
         ],
       },
       {
@@ -53,7 +61,8 @@ module.exports = {
         use: [
           MiniCssExtractPlugin.loader,
           "css-loader",
-          // help to add the polyfill for the css modules (to support older and different types of browsers)
+          // help to add the polyfill for the css modules
+          // (to support older and different types of browsers)
           {
             loader: "postcss-loader",
             options: {
